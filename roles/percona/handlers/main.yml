@@ -1,0 +1,11 @@
+---
+
+- name: "Ensure that percona is running and enabled"
+  service:
+    name: "mysql"
+    state: "started"
+    enabled: "yes"
+  register: mysql_service
+
+- name: "Restart percona"
+  service: "name=mysql state=restarted"

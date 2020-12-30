@@ -1,0 +1,4 @@
+---
+# vars file for php
+#PHP packages
+php_modules: [ 'php', 'php-fpm', 'php-mysqlnd', 'php-devel', 'php-curl', 'php-gd', 'php-mbstring', 'php-xml', 'php-xmlrpc', 'php-soap', 'php-intl', 'php-zip', 'php-common' ]

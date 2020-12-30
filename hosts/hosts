@@ -1,0 +1,5 @@
+[webserver]
+vagrantansible ansible_host=192.168.0.199 ansible_user=ansible ansible_ssh_private_key_file=/home/ansible/.ssh/ansible
+vagranttest ansible_host=192.168.0.130 ansible_user=vagrant ansible_ssh_private_key_file=/home/alin.gilca/vagrant2test/.vagrant/machines/default/virtualbox/private_key
+#ansible_port=2222
+

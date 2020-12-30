@@ -1,0 +1,57 @@
+---
+# tasks file for wordpress
+# WordPress Configuration
+
+    - name: Download and unpack latest WordPress
+      unarchive:
+        src: https://wordpress.org/latest.tar.gz
+        dest: "/opt/www/{{ http_host }}"
+        remote_src: yes
+#        creates: "/opt/www/{{ http_host }}/wordpress"
+  
+    - name: Set ownership
+      file:
+        path: "/opt/www/{{ http_host }}"
+        state: directory
+        recurse: yes
+        owner: apache
+        group: apache
+      tags: wpconfig
+  
+    - name: Set permissions for directories
+      file:
+        path: /opt/www/{{ http_host }}/wordpress/
+        state: directory
+        mode: '0750'
+      tags: wpconfig
+  
+    - name: Set permissions for files
+      file:
+        path: /opt/www/{{ http_host }}/wordpress/
+        recurse: yes
+        mode: '0777'
+      tags: wpconfig
+    
+    - name: Update WordPress config file
+      copy: 
+        src: files/wp-config.php
+        dest: /opt/www/{{ http_host }}/wordpress/wp-config.php
+        owner: apache
+        group: apache
+        mode: '0644'
+        backup: yes
+      tags: wpconfig
+
+    - name: Update WordPress config file
+      copy: 
+        src: files/.htaccess
+        dest: /opt/www/{{ http_host }}/wordpress/.htaccess
+        owner: apache
+        group: apache
+        mode: '0644'
+        backup: yes
+      tags: wpconfig
+
+    
+      
+    

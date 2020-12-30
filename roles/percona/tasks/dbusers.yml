@@ -1,0 +1,31 @@
+---
+
+#Define new percona wp db and user
+
+- name: Create new databases for WP
+  mysql_db:
+    name: wp_db01
+    login_host: "{{ item.host | default('localhost') }}"
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+#   name: "{{ item.name }}"
+    collation: "utf8mb4_unicode_ci"
+    encoding: "utf8mb4"
+    state: "present"
+#    with_items: "{{ mysql_databases }}"
+#  when: mysql_databases|lower() != 'none'
+  tags: perconawpdb
+
+- name: Create MySQL users
+  mysql_user:
+    name: wp_user1
+    password: "{{ mysql_pass }}"
+    login_host: "{{ item.host | default('localhost') }}"
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+    priv: "{{ item.priv|default('*.*:ALL') }}"
+    host: "{{ item.host | default('localhost') }}"
+    state: present
+  with_items: "{{ mysql_users }}"
+#  when: mysql_users|lower() != 'none'
+  tags: perconawpuser

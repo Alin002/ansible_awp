@@ -1,0 +1,13 @@
+---
+# vars file for /home/ansible/ansibleproject/roles/apache
+
+#MySQL Settings
+mysql_root_password: "percona001"
+mysql_db: "wpdb"
+mysql_user: "wpuser"
+mysql_password: "Wpuser001"
+  
+#HTTP Settings
+http_host: "wpsite.com"
+http_conf: "www.wpsite.com.conf"
+http_port: "80"

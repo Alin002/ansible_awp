@@ -1,0 +1,54 @@
+---
+# tasks file for /home/ansible/ansibleproject/roles/apache
+- name: Ensure apache is at the latest version
+  dnf: 
+    name: httpd
+    state: latest
+  tags: apache
+
+- name: ensure apache is running (and enable it at boot)
+  service:
+    name: httpd
+    state: started
+    enabled: yes
+  tags: apache
+
+- name: Create Apache Document root
+  file:
+    path: "/opt/www/{{ http_host }}/"
+#    path: "/opt/www/{{ http_host }}/wordpress"
+    state: directory
+    owner: "apache"
+    group: "apache"
+    mode: '0755'
+  tags: apache
+
+- name: Set up Apache VirtualHost
+  template:
+    src: "files/virtualhost.conf"
+    dest: "/etc/httpd/conf.d/{{ http_conf }}"
+    owner: root
+    group: root
+    mode: u=rw,g=r,o=r
+  tags: apache
+
+- name: Copy httpd.conf file
+  copy: 
+    src: files/httpd.conf
+    dest: "/etc/httpd/conf/"
+    owner: root
+    group: root
+    mode: '0644'
+    backup: yes
+  tags: apache
+  
+- name: Copy index file
+  copy: 
+    src: files/index.php
+#    dest: "/opt/www/{{ http_host }}/wordpress"
+    dest: "/opt/www/{{ http_host }}/"
+    owner: root
+    group: root
+    mode: '0644'
+    backup: yes
+  tags: apache

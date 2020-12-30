@@ -1,0 +1,25 @@
+---
+- name: Restore Wordpress files
+  unarchive:
+    src: wordpress-202012281145.tar.gz
+    dest: /
+  tags: restore
+
+- name: Copy Wp-db 
+  copy:
+    src: wp_db01-202012281145.sql.gz
+    dest: /tmp
+  tags: restore
+
+- name: Restore Wp-db 
+  mysql_db:
+    name: wp_db01
+    state: import
+    target: /tmp/wp_db01-202012281145.sql.gz
+    login_host: "{{ item.host | default('localhost') }}"
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+  tags: restore
+    
+  
+- include: handlers/main.yml

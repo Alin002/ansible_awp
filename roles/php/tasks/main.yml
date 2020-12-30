@@ -1,0 +1,35 @@
+---
+# tasks file for php
+- name: Import remi GPG key.
+  rpm_key:
+    key: "{{ remi_repo_gpg_key_url }}"
+    state: present
+- name: Install remi repo.
+  dnf:
+    name: "{{ remi_repo_url }}"
+    state: present
+
+- name: Enable PHP Remi Repository
+  shell:
+    cmd: dnf module reset php -y
+
+- name: Enable PHP Remi Repository
+  shell: 
+    cmd: dnf module enable php:remi-7.4 -y
+
+- name: "Install PHP packages"
+  dnf:
+    name: "{{ php_modules }}"
+    update_cache: yes
+    state: present
+
+
+  #- name: Install PHP packages
+#  yum: 
+#    name: "{{ item|join('-') }}"
+#    update_cache: yes
+#    state: present
+#    with_items: "{{ php_modules }}"
+#    with_nested:
+#      - "{{php_modules}}"
+#    when: php_modules is defined

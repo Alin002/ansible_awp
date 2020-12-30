@@ -1,0 +1,71 @@
+---
+# tasks file for ansible-role-percona-server-setup
+
+- name: Add Percona yum repository
+  yum:
+    name: https://repo.percona.com/yum/percona-release-latest.noarch.rpm
+#    name: https://repo.percona.com/yum/percona-release-1.0-9.noarch.rpm
+    state: present
+  tags: percona
+
+- name: Enable Percona repository (Percona version <= 8)
+  command: 'percona-release setup {{ percona_product }}' 
+  tags: percona
+
+- name: Disable mysql for percona instalation
+  command: dnf -y module disable mysql
+  tags: percona
+  
+- name: Install percona database server (Percona version < 8)
+  yum:
+    name: 
+      - "Percona-Server-server-{{mysql_version_major}}{{mysql_version_minor}}"
+#      - "Percona-Server-client-{{mysql_version_major}}{{mysql_version_minor}}"
+#      - "Percona-Server-devel-{{mysql_version_major}}{{mysql_version_minor}}"
+#      - "percona-toolkit"
+#      - "percona-xtrabackup-24"
+      - "python3-mysql"
+    state: present
+  when: mysql_version_major|int < 8
+  tags: percona
+
+#- name: "Install percona database server (Percona version >= 8)"
+#  yum:
+#    name: 
+#      - "percona-server-server-{{mysql_version_major}}.{{mysql_version_minor}}"
+#      - "percona-server-client-{{mysql_version_major}}.{{mysql_version_minor}}"
+#      - "percona-server-devel-{{mysql_version_major}}.{{mysql_version_minor}}"
+#      - "percona-toolkit"
+#      - "percona-xtrabackup"
+#      - "python3-mysql"
+#    state: present
+#  when: mysql_version_major|int >= 8
+#  tags: percona
+
+- name: "Adjust permissions of datadir"
+  file:
+    path: "{{ mysql_datadir }}"
+    owner: "mysql"
+    group: "mysql"
+    mode: 0755
+    state: "directory"
+  tags: percona
+
+- name: Restart MySQL service 
+  service: 
+    name: mysqld
+    state: restarted
+  tags: percona
+
+- name: "Parse temporary password from mysql log, getting last one"
+  shell: "cat /var/log/mysqld.log | sed -n 's/.*temporary password is generated for root@localhost: //p' | tail -n1"
+  register: temppass
+  tags: setrootpass
+
+- name: "Set root password (using temp password to log in)"
+#  shell: 'mysql -e "SET PASSWORD = ''{{ mysql_root_password }}'';" --connect-expired-password -uroot -p"{{ temppass.stdout }}"'
+  shell: 'mysql -e "SET PASSWORD = ''Percona_001155'';" --connect-expired-password -uroot -p"{{ temppass.stdout }}"'
+  tags: setrootpass
+  
+- include: dbusers.yml
+
