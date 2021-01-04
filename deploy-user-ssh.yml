@@ -3,14 +3,9 @@
   become: yes
   become_user: root
   
-    tasks:
+  tasks:
   
-#    - name: Add a new user named ansible
-#      user:
-#          name=ansible
-#          password={{ ansible_password }}
-  
-  - name: Add ansible user to the sudoers
+    - name: Add ansible user to the sudoers
       copy:
           dest: "/etc/sudoers.d/ansible"
           content: "ansible  ALL=(ALL)  NOPASSWD: ALL"
