@@ -120,3 +120,4 @@ LogStart
 	rm -f ${SITELIST}
 	LogEnd
 #
+git branch --merge
